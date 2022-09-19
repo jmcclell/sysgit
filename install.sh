@@ -254,7 +254,7 @@ info "Copying new configuration files"
 # Actually do the checkout of config files into the workspace
 sysgit checkout
 
-# Install sysgit script to /usr/local/bin
+# Install sysgit script to $HOME/.local/bin
 set +e
 read -r -d '' sysgit_script <<"EOF"
 #!/bin/bash
@@ -262,13 +262,13 @@ read -r -d '' sysgit_script <<"EOF"
 EOF
 set -e
 
-sysgit_executable="${SYSGIT_EXECUTABLE_PATH:-"/usr/local/bin"}/sysgit"
+sysgit_executable="${SYSGIT_EXECUTABLE_PATH:-"${HOME}/.local/bin"}/sysgit"
 
 info "Installing sysgit executable"
 if [[ -f "${sysgit_executable}" ]]; then
   check_run_command "Pre-existing sysgit executable found at ${sysgit_executable}" "Overwrite?" "echo \"${sysgit_script}\" > \"${sysgit_executable}\""
 else
-  check_run_command "No sysgit executable found" "Create?" "echo \"${sysgit_script}\" > \"${sysgit_executable}\""
+  check_run_command "No sysgit executable found" "Create?" "mkdir -p \"${SYSGIT_EXECUTABLE_PATH}\"; echo \"${sysgit_script}\" > \"${sysgit_executable}\""
 fi
 
 # Ensure the sysgit command is executable
@@ -281,3 +281,4 @@ if [[ -f "${bootstrap_file}" ]]; then
 fi
 
 info "Installation complete."
+info "NOTE: ${tty_reset}It is recommended that you add ${SYSGIT_EXECUTABLE_PATH} to your \$PATH for ease of use"
