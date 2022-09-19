@@ -262,7 +262,8 @@ read -r -d '' sysgit_script <<"EOF"
 EOF
 set -e
 
-sysgit_executable="${SYSGIT_EXECUTABLE_PATH:-"${HOME}/.local/bin"}/sysgit"
+SYSGIT_EXECUTABLE_PATH="${SYSGIT_EXECUTABLE_PATH:-"${HOME}/.local/bin"}"
+sysgit_executable="${SYSGIT_EXECUTABLE_PATH}/sysgit"
 
 info "Installing sysgit executable"
 if [[ -f "${sysgit_executable}" ]]; then
