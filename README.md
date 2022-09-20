@@ -159,3 +159,9 @@ Root
 ├── .zprofile
 └── .sysgit-bootstrap
 ```
+
+# Uninstalling
+
+Removing sysgit is as simple as deleting the bare repository directory (by default
+located at `$HOME/.sysgit`) and removing the sysgit script (by default located at
+`$HOME/.local/bin/sysgit`). That's it.
