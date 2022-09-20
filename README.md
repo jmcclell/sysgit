@@ -160,6 +160,19 @@ Root
 └── .sysgit-bootstrap
 ```
 
+If you don't have an existing repository for your local user configuration,
+then simply create an empty repository on e.g. Github and point sysgit to
+that. Once sysgit is installed, you can then start adding your local config
+files using the usual `sysgit add` / `sysgit commit` workflow and build up
+your configuration repo from there.
+
+# Secrets
+
+It is not recommended to commit secrets (e.g. private keys, API keys) in plain
+text, even if your repository is hosted as a private repo. You should employ some
+sort of proper secrets workflow to synchrnoize them. This is out of scope for this
+README.
+
 # Uninstalling
 
 Removing sysgit is as simple as deleting the bare repository directory (by default
