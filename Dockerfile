@@ -25,5 +25,5 @@ ENV NONINTERACTIVE=1
 ENV SYSGIT_CONFIG_REPO="file:///sysgit/test-config-repo/.git"
 #RUN sudo apt-get -qq clean autoclean && sudo apt-get -qq autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-ENTRYPOINT ["/bin/bash", "--init-file", "/sysgit/install.sh; set +e; set +u; set +o pipefail", "-"]
+ENTRYPOINT ["/bin/bash", "-c", "/sysgit/install.sh; /bin/bash -"]
 

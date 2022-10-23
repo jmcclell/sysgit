@@ -5,9 +5,7 @@ help:
 
 .DEFAULT_GOAL := help
 
-
-
-.build-sentinel: Dockerfile install.sh test-config-repo/.sysgit-bootstrap
+.build-sentinel: Dockerfile install.sh test-config-repo/.config/sysgit/bootstrap.sh
 	docker buildx build -t sysgit:latest --load . && echo "1" > .build-sentinel
 
 build: .build-sentinel

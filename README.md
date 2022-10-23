@@ -1,6 +1,6 @@
 # sysgit
 
-sysgit helps you manage your user configuration files across multiple systems.
+sysgit helps you manage your user configuration (dot) files across one or more UNIX-based systems.
 
 
 # What is it?
@@ -27,6 +27,8 @@ this particular git repo from anywhere.
 
 To augment the behavior of the installation script, you can export several
 environment variables to be made available when the script executes.
+Alternatively, you can pass the same options via arguments to the installation
+script. Run `-h` on the installation script for usage information.
 
 ```sh
 # The URL to the git repository used as the canonical storage for your system
@@ -42,6 +44,8 @@ export SYSGIT_HOME="..."
 export SYSGIT_WORKSPACE="..."
 # The path to install the sysgit executable script. [Default: /usr/local/bin]
 export SYSGIT_EXECUTABLE_PATH="..."
+# A string of arguments to pass to the bootstrap script (if one exists)
+export SYSGIT_BOOTSTRAP_ARGS="-a -b -c --foo=bar arg1 arg2 ..."
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jmcclell/sysgit/HEAD/install.sh)"
 ```
@@ -133,20 +137,30 @@ To fix that issue, this script will back up all colliding files into
 # bootstrap file
 
 Along with initializing sysgit, this installation script can also execute a
-bootstrap file named `.sysgit-bootstrap` located at the root of your
-configuration repository. This script will be executed with bash from the
-installation script and can be used for any bootstrapping tasks, e.g.
-installation of software.
+bootstrap script located at `.config/sysgit/boootstrap.sh`, relative to your
+config repo root. This script will be run via bash and can handle any
+bootstrapping tasks you want, e.g. software installation.
 
 It is recommended that any bootstrap script you create contain internal logic
 to detect OS and to assume a non-interactive mode so that you may use it for
 automated machine bootstrapping, e.g. ensuring you always have your preferred
 configuration within development Docker images.
 
-It is also recommended to make your bootstrap script idempotent so that it can
-be safely be ran more than once. This helps if you ever want to re-install
+It is also recommended to make your bootstrap scripts idempotent so that they
+can be safely be ran more than once. This helps if you ever want to re-install
 sysgit from scratch or need to sync changes to the bootstrap file from another
 machine.
+
+Optionally, you can choose to take advantage of the ability to pass arguments
+to the bootstrap script. With arguments you can allow for much more complex
+logic. For example, you can have the default zero-arg execution be a slim
+install that executes quickly and is good for most contexts (e.g. install your
+favorite editor and its plugins) while providing the option to pass one or more
+arguments to install more things. This can let you manage your config across
+many context, from small Docker images to your local dev machine in such a way
+that basic bootstrapping is handled elegantly and simply from a single
+repository. This exercise is left up to the reader.
+
 
 # configuration repo
 
@@ -162,6 +176,8 @@ Root
 ├── .zshrc
 ├── .zprofile
 └── .sysgit-bootstrap
+   └── base.sh
+
 ```
 
 If you don't have an existing repository for your local user configuration,
@@ -179,6 +195,13 @@ for this README.
 
 # Uninstalling
 
-Removing sysgit is as simple as deleting the bare repository directory (by
-default located at `$HOME/.sysgit`) and removing the sysgit script (by default
-located at `$HOME/.local/bin/sysgit`). That's it.
+Removing sysgit itself is as simple as deleting the bare repository directory
+(by default located at `$HOME/.sysgit`) and removing the sysgit script (by
+default located at `$HOME/.local/bin/sysgit`). That's it.
+
+If you want to remove all of the files managed by sysgit, you can use normal
+git commands (e.g. `reset --hard`) but BE CAREFUL! Will leave this as an
+exercise to the reader. You'll need to do this before removing sysgit itself,
+or re-install sysgit to do this.
+
+

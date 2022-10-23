@@ -6,7 +6,7 @@
 # - instance of Bash executable at /bin/bash
 # - instance of git in $PATH (discoverable with `command -v`)
 #
-# Should work on macOS and Linux
+# Tested on macOS (Monterey) and Linux (Debian-based)
 
 #                       #
 # --- Setup Options --- #
@@ -15,7 +15,6 @@
 set -e # Fail on any non-zero exit status
 set -u # Fail for referencing non-declared vars
 set -o pipefail # Don't silently swallow errors in pipelines
-
 
 #                              #
 # --- Setup Error Handling --- #
@@ -26,6 +25,73 @@ abort() {
   printf "%s\n" "$@" >&2
   exit 1
 }
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+
+usage() {
+  cat << EOF # remove the space between << and EOF, this is due to web plugin issue
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [--non-interactive] [--config-repo url] [--config-repo-branch branch] [--home path] [--workspace path] [--executable-path path] [ -- all bootstrap args]
+
+SysGit installation script.
+
+Available options:
+
+-h, --help            Print this help and exit
+-v, --verbose         Enable verbose output
+--interactive         Enable interactive mode
+--config-repo         The URL to the git repository used as the canonical storage for your system configuration files
+--config-repo-branch  The name of the configrepo git branch to clone [Default: master]
+--home                Where to clone the configuration repo [Default: $HOME/.sysgit]
+--workspace           The path to the location you wish sysgit to manage [Default: $HOME]
+--executable-path     The path to install the sysgit executable script [Default: /usr/local/bin]
+
+Argument parsing stops when `--` is encountered as a lone argument. All arguments past that point are collected and passed to the bootstrap script during installation.
+
+EOF
+  exit
+}
+
+parse_params() {
+  while :; do
+    case "${1-}" in
+    -h | --help) usage ;;
+    -v | --verbose) set -x ;;
+    --non-interactive) export NONINTERACTIVE=1 ;;
+    --config-repo)
+      SYSGIT_CONFIG_REPO="${2-}"
+      shift
+      ;;
+    --config-repo-branch)
+      SYSGIT_CONFIG_REPO_BRANCH="${2-}"
+      shift
+      ;;
+    --home)
+      SYSGIT_HOME="${2-}"
+      shift
+      ;;
+    --workspace)
+      SYSGIT_WORKSPACE="${2-}"
+      shift
+      ;;
+    --executable-path)
+      SYSGIT_EXECUTABLE_PATH="${2-}"
+      shift
+      ;;
+    --) shift; break 2 ;; # Stop arg parsing after --
+    -?*) die "Unknown option: $1" ;;
+    *) break ;;
+    esac
+    shift
+  done
+
+  if [[ -n "$@" ]]; then
+    SYSGIT_BOOTSTRAP_ARGS=("$@")
+  fi
+
+  return 0
+}
+
+parse_params "$@"
 
 #                            #
 # --- Initial Pre-Checks --- #
@@ -262,7 +328,7 @@ read -r -d '' sysgit_script <<"EOF"
 EOF
 set -e
 
-SYSGIT_EXECUTABLE_PATH="${SYSGIT_EXECUTABLE_PATH:-"${HOME}/.local/bin"}"
+SYSGIT_EXECUTABLE_PATH="${SYSGIT_EXECUTABLE_PATH:-"${HOME}//bin"}"
 sysgit_executable="${SYSGIT_EXECUTABLE_PATH}/sysgit"
 
 info "Installing sysgit executable"
@@ -275,10 +341,16 @@ fi
 # Ensure the sysgit command is executable
 chmod +x "${sysgit_executable}"
 
+# TODO: Just run a single script found in ~/.config/sysgit/bootstrap.sh and provide a way to pass args to it which will let us move this idea/concept of
+#       modules out of this script and provides ultimate flexibility. We don't need to add that kind of rigidness here.
+
 # Run bootstrap script if present
-bootstrap_file="${SYSGIT_WORKSPACE}/.sysgit-bootstrap"
-if [[ -f "${bootstrap_file}" ]]; then
-  check_run_command "Bootstrap file found at ${bootstrap_file}" "Execute script?" "/bin/bash -c \"\$(cat \"${bootstrap_file}\")\""
+bootstrap_file="${SYSGIT_WORKSPACE}/.config/sysgit/bootstrap.sh"
+
+bootstrap_args="${SYSGIT_BOOTSTRAP_ARGS:-""}"
+
+if [[ -f "$bootstrap_file" ]]; then
+  check_run_command "Bootstrap file found at ${bootstrap_file}" "Execute it?" "/bin/bash \"${bootstrap_file}\" ${bootstrap_args}"
 fi
 
 info "Installation complete."
