@@ -324,7 +324,7 @@ sysgit checkout
 set +e
 read -r -d '' sysgit_script <<"EOF"
 #!/bin/bash
-\$(command -v git) --git-dir="${SYSGIT_HOME}/" --work-tree="${SYSGIT_WORKSPACE}" '"${@}"'
+\$(command -v git) --git-dir=\""${SYSGIT_HOME}/"\" --work-tree=\""${SYSGIT_WORKSPACE}"\" \"\${@}\"
 EOF
 set -e
 
