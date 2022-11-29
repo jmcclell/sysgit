@@ -40,7 +40,7 @@ Available options:
 -v, --verbose         Enable verbose output
 --interactive         Enable interactive mode
 --config-repo         The URL to the git repository used as the canonical storage for your system configuration files
---config-repo-branch  The name of the configrepo git branch to clone [Default: master]
+--config-repo-branch  The name of the configrepo git branch to clone [Default: main]
 --home                Where to clone the configuration repo [Default: $HOME/.sysgit]
 --workspace           The path to the location you wish sysgit to manage [Default: $HOME]
 --executable-path     The path to install the sysgit executable script [Default: /usr/local/bin]
@@ -261,7 +261,7 @@ check_run_command() {
 
 # Figure out what repository we're using for configuration
 config_repo_url=${1:-${SYSGIT_CONFIG_REPO:-}}
-config_repo_branch=${2:-${SYSGIT_CONFIG_REPO_BRANCH:-"master"}}
+config_repo_branch=${2:-${SYSGIT_CONFIG_REPO_BRANCH:-"main"}}
 
 if [[ -z "${config_repo_url}" ]]; then
   if [[ -z "${NONINTERACTIVE:-}" ]]; then
