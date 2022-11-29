@@ -328,7 +328,7 @@ read -r -d '' sysgit_script <<"EOF"
 EOF
 set -e
 
-SYSGIT_EXECUTABLE_PATH="${SYSGIT_EXECUTABLE_PATH:-"${HOME}//bin"}"
+SYSGIT_EXECUTABLE_PATH="${SYSGIT_EXECUTABLE_PATH:-"${HOME}/bin"}"
 sysgit_executable="${SYSGIT_EXECUTABLE_PATH}/sysgit"
 
 info "Installing sysgit executable"
