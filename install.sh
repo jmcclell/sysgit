@@ -26,11 +26,11 @@ abort() {
   exit 1
 }
 
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]:-""}")" &>/dev/null && pwd -P)
 
 usage() {
   cat << EOF # remove the space between << and EOF, this is due to web plugin issue
-Usage: $(basename "${BASH_SOURCE[0]}") [-h] [--non-interactive] [--config-repo url] [--config-repo-branch branch] [--home path] [--workspace path] [--executable-path path] [ -- all bootstrap args]
+Usage: $(basename "${BASH_SOURCE[0]:-""}") [-h] [--non-interactive] [--config-repo url] [--config-repo-branch branch] [--home path] [--workspace path] [--executable-path path] [ -- all bootstrap args]
 
 SysGit installation script.
 
