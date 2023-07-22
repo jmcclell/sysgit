@@ -201,7 +201,21 @@ default located at `$HOME/.local/bin/sysgit`). That's it.
 
 If you want to remove all of the files managed by sysgit, you can use normal
 git commands (e.g. `reset --hard`) but BE CAREFUL! Will leave this as an
-exercise to the reader. You'll need to do this before removing sysgit itself,
-or re-install sysgit to do this.
+exercise to the reader. 
+
+# WARNING
+
+As of this version, the wrapper `sysgit` script does not protect you from
+running destructive git commands. This means with the right combination of
+options and arguments you could potentially make `sysgit`, via `git`, do
+terrible things such as delete every file in `$HOME`. As long as you are
+sticking to the basic `add`/`pull`/`fetch`/`rebase`/`commit`/`push` workflow
+you've nothing to worry but be very careful with `reset --hard`, and for the 
+love of god do **not** run `clean -f -x`.
+
+If this script starts seeing usage by more people, adding safeguards against
+these destructive commands will become a priority. Until such time, use
+caution and make sure you understand the underlying git commands you're
+running!
 
 
